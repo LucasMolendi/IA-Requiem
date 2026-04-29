@@ -5,30 +5,41 @@ from groq import Groq
 client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 
 SYSTEM_PROMPT = """
-Tu es un expert botaniste connecté à des capteurs IoT de plantes.
-Tu reçois des données brutes et tu dois répondre UNIQUEMENT en JSON valide,
-sans markdown, sans explication, avec ce format exact :
+Tu es un expert agronome et maraîcher connecté à des capteurs IoT.
+Tu analyses les données de cultures et de capteurs pour conseiller un agriculteur.
+Tu dois répondre UNIQUEMENT en JSON valide, sans markdown, sans explication, avec ce format exact :
 
 {
   "health_score": 75,
   "status": "drought_stress",
   "status_label": "Stress hydrique",
-  "advice": "Votre plante manque d'eau..."
+  "advice": "Vos tomates manquent d'eau..."
 }
 
 Valeurs possibles pour status :
-healthy | drought_stress | overwatered | light_deficiency | heat_stress | nutrient_deficiency
+healthy | drought_stress | overwatered | light_deficiency | heat_stress | nutrient_deficiency | disease_risk
 """
 
-def analyze_and_advise(plant_name: str, species: str, reading: dict) -> dict:
+def analyze_and_advise(plant: dict, plants_user: dict, capteurs: dict) -> dict:
     user_message = f"""
-Plante : {plant_name} ({species})
+Culture : {plant['nom']} (type: {plant['type']})
+Besoin en eau : {plant['besoin_eau']}
+Ensoleillement requis : {plant['ensoleillement']}
+Saisons : {', '.join(plant['saison'])}
+Croissance : {plant['croissance_jours']} jours
 
-Données capteurs :
-- Humidité du sol : {reading['humidity']}%
-- Humidité de l'air : {reading['air_humidity']}%
-- Température : {reading['temperature']}°C
-- Luminosité : {reading['light_level']} lux
+Informations parcelle :
+- Date de plantation : {plants_user['date_plantation']}
+- Surface : {plants_user['surface_m2']} m²
+- État actuel : {plants_user['etat']}
+
+Données capteurs en temps réel :
+- Humidité du sol : {capteurs['humidity']}%
+- Humidité de l'air : {capteurs['air_humidity']}%
+- Température : {capteurs['temperature']}°C
+- Luminosité : {capteurs['light_level']} lux
+
+Analyse et génère ton conseil JSON.
 """
 
     try:
