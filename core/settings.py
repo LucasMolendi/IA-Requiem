@@ -13,7 +13,8 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 from pathlib import Path
 import os
 from dotenv import load_dotenv
-
+import locale
+locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
